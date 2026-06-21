@@ -304,3 +304,106 @@ body {
   background-image: var(--gradient-spatial);
   background-attachment: fixed;
 }
+
+/* ============================================================
+   Extra interactivity layer (CSS-only, no layout/feature changes)
+   ============================================================ */
+
+/* Shine sweep across primary buttons on hover */
+@layer base {
+  :where(button, [role="button"], [data-slot="button"]) {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  :where(button, [role="button"], [data-slot="button"])::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      color-mix(in oklab, white 35%, transparent) 50%,
+      transparent 70%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.7s var(--ease-spatial);
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+  }
+  :where(button, [role="button"], [data-slot="button"]):hover::before {
+    transform: translateX(120%);
+  }
+  :where(button, [role="button"], [data-slot="button"]) > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Animated conic-glow border on cards when hovered */
+  :where([data-slot="card"], .card) {
+    position: relative;
+  }
+  :where([data-slot="card"], .card)::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+      from var(--spin, 0deg),
+      transparent 0deg,
+      color-mix(in oklab, var(--primary) 60%, transparent) 90deg,
+      transparent 180deg,
+      color-mix(in oklab, var(--chart-1) 55%, transparent) 270deg,
+      transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-spatial);
+    pointer-events: none;
+  }
+  :where([data-slot="card"], .card):hover::after {
+    opacity: 1;
+    animation: spatial-spin 4s linear infinite;
+  }
+
+  /* Icons inside buttons feel responsive */
+  :where(button, [role="button"]) :where(svg) {
+    transition: transform 0.3s var(--ease-spatial);
+  }
+  :where(button, [role="button"]):hover :where(svg) {
+    transform: scale(1.08) rotate(-2deg);
+  }
+
+  /* Link underline reveal */
+  :where(a[href]):not([data-slot]) {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.35s var(--ease-spatial);
+  }
+  :where(a[href]):not([data-slot]):hover {
+    background-size: 100% 1px;
+  }
+}
+
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes spatial-spin {
+  to { --spin: 360deg; }
+}
+
+/* Disable shine inside Leaflet map controls/tiles */
+.leaflet-container :where(button, a)::before,
+.leaflet-container :where(button, a)::after {
+  display: none !important;
+}
+
