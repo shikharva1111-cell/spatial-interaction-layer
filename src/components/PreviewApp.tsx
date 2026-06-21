@@ -24,36 +24,36 @@ L.Icon.Default.mergeOptions({
 });
 
 // ─── Design System ─────────────────────────────────────────────────────────────
-// DriveSafe AI — Futuristic dark HUD palette (Tesla / Iron Man inspired)
-// Token roles are preserved so the existing layout/features render unchanged,
-// only retuned for a dark neon theme with glow-based elevation.
+// DriveSafe AI — Calm, premium light palette (Apple / Airbnb / Calm inspired)
+// Soft off-white surfaces, muted ink, gentle natural accents. No neon, no glow.
 const C = {
-  navy: "#0284C7",          // primary brand — works as fill (white text AA) AND as ink on dark bg
-  navyLight: "#38BDF8",     // neon sky accent
-  white: "#070B16",         // deepest space — page background
-  offWhite: "#0E1628",      // elevated surface / card
-  gray: "#94A3B8",          // secondary text
-  grayLight: "#475569",     // tertiary / inactive
-  grayBorder: "rgba(148,163,184,0.18)",
-  red: "#FF3D5A",           // danger / SOS
-  redLight: "rgba(255,61,90,0.14)",
-  green: "#10E098",         // safe / online
-  greenLight: "rgba(16,224,152,0.14)",
-  amber: "#FBBF24",         // caution
-  amberLight: "rgba(251,191,36,0.14)",
-  blue: "#38BDF8",          // info / data
-  blueLight: "rgba(56,189,248,0.14)",
+  navy: "#1C1F26",          // soft near-black ink (primary text & filled buttons)
+  navyLight: "#3A3F4B",     // secondary ink
+  white: "#FBFAF7",          // warm off-white page background
+  offWhite: "#F4F2EC",       // beige tinted surface
+  gray: "#6B7280",           // secondary text
+  grayLight: "#C9CDD3",      // tertiary / inactive
+  grayBorder: "rgba(28,31,38,0.08)",
+  red: "#C2410C",            // warm muted orange-red (SOS, never harsh)
+  redLight: "rgba(194,65,12,0.10)",
+  green: "#6B8E5A",          // muted sage
+  greenLight: "rgba(107,142,90,0.12)",
+  amber: "#D97706",          // warm honey
+  amberLight: "rgba(217,119,6,0.10)",
+  blue: "#5B7BA8",           // soft slate blue
+  blueLight: "rgba(91,123,168,0.12)",
 };
 
-// Neon-tinted elevation — replaces black shadows with cyan glow for HUD depth
+// Soft, natural elevation — gentle shadows, no color tint, no glow
 const elev = {
-  xs: "0 1px 2px rgba(0,0,0,0.5), 0 0 0 1px rgba(56,189,248,0.04)",
-  sm: "0 2px 8px rgba(0,0,0,0.55), 0 0 0 1px rgba(56,189,248,0.06)",
-  md: "0 6px 22px rgba(0,0,0,0.6), 0 0 0 1px rgba(56,189,248,0.08), 0 0 24px rgba(56,189,248,0.04)",
-  lg: "0 12px 36px rgba(0,0,0,0.65), 0 0 0 1px rgba(56,189,248,0.10), 0 0 40px rgba(56,189,248,0.06)",
-  xl: "0 24px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(56,189,248,0.12), 0 0 64px rgba(56,189,248,0.08)",
-  insetHL: "inset 0 1px 0 rgba(255,255,255,0.06)",
+  xs: "0 1px 2px rgba(28,31,38,0.04)",
+  sm: "0 1px 3px rgba(28,31,38,0.05), 0 2px 8px rgba(28,31,38,0.04)",
+  md: "0 2px 6px rgba(28,31,38,0.05), 0 8px 20px rgba(28,31,38,0.06)",
+  lg: "0 4px 12px rgba(28,31,38,0.06), 0 16px 32px rgba(28,31,38,0.08)",
+  xl: "0 8px 24px rgba(28,31,38,0.08), 0 24px 56px rgba(28,31,38,0.10)",
+  insetHL: "inset 0 1px 0 rgba(255,255,255,0.9)",
 };
+
 
 
 // ─── Navigation Context ─────────────────────────────────────────────────────────
