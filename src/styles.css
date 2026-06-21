@@ -299,41 +299,22 @@ html { scroll-behavior: smooth; }
   }
 }
 
-/* DriveSafe AI — futuristic HUD ambient backdrop */
+/* DriveSafe AI — calm, premium ambient backdrop */
 body {
-  background-color: #03060f;
+  background-color: #FBFAF7;
   background-image:
-    radial-gradient(circle at 12% 8%, rgba(56,189,248,0.18), transparent 55%),
-    radial-gradient(circle at 88% 92%, rgba(16,224,152,0.12), transparent 55%),
-    radial-gradient(circle at 50% 50%, rgba(2,132,199,0.10), transparent 60%),
-    linear-gradient(180deg, #03060f 0%, #060b1c 100%);
+    radial-gradient(circle at 15% 10%, rgba(107,142,90,0.05), transparent 55%),
+    radial-gradient(circle at 85% 90%, rgba(91,123,168,0.05), transparent 55%);
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: #1C1F26;
 }
 
-/* HUD scanline texture overlay — very subtle, never blocks interaction */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-  background-image: repeating-linear-gradient(
-    0deg,
-    rgba(56,189,248,0.025) 0px,
-    rgba(56,189,248,0.025) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  mix-blend-mode: overlay;
-}
-
-/* Leaflet map tiles need neon-night treatment for HUD feel */
-.leaflet-tile {
-  filter: invert(1) hue-rotate(180deg) brightness(0.85) saturate(0.7) contrast(1.05);
-}
+/* Restore default light Leaflet tiles (no night filter) */
 .leaflet-container {
-  background: #060b1c !important;
+  background: #EFEDE7 !important;
+}
+.leaflet-tile {
+  filter: saturate(0.85) brightness(1.02);
 }
 
 /* ============================================================
@@ -348,58 +329,12 @@ body::before {
     isolation: isolate;
   }
   :where(button, [role="button"], [data-slot="button"])::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      115deg,
-      transparent 30%,
-      color-mix(in oklab, white 35%, transparent) 50%,
-      transparent 70%
-    );
-    transform: translateX(-120%);
-    transition: transform 0.7s var(--ease-spatial);
-    pointer-events: none;
-    z-index: 0;
-    mix-blend-mode: overlay;
-  }
-  :where(button, [role="button"], [data-slot="button"]):hover::before {
-    transform: translateX(120%);
-  }
-  :where(button, [role="button"], [data-slot="button"]) > * {
-    position: relative;
-    z-index: 1;
+    content: none;
   }
 
-  /* Animated conic-glow border on cards when hovered */
-  :where([data-slot="card"], .card) {
-    position: relative;
-  }
+  /* Cards: no rotating conic glow — keep calm */
   :where([data-slot="card"], .card)::after {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1px;
-    background: conic-gradient(
-      from var(--spin, 0deg),
-      transparent 0deg,
-      color-mix(in oklab, var(--primary) 60%, transparent) 90deg,
-      transparent 180deg,
-      color-mix(in oklab, var(--chart-1) 55%, transparent) 270deg,
-      transparent 360deg
-    );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0;
-    transition: opacity 0.4s var(--ease-spatial);
-    pointer-events: none;
-  }
-  :where([data-slot="card"], .card):hover::after {
-    opacity: 1;
-    animation: spatial-spin 4s linear infinite;
+    content: none;
   }
 
   /* Icons inside buttons feel responsive */
