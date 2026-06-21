@@ -13,7 +13,7 @@ type SR = any;
 export default function VoiceSOSListener({
   onTrigger,
   triggerWords = ["help", "sos", "save me", "emergency", "bachao", "danger"],
-  countdownSeconds = 2,
+  countdownSeconds = 5,
 }: Props) {
   const [supported, setSupported] = useState(true);
   const [listening, setListening] = useState(false);
