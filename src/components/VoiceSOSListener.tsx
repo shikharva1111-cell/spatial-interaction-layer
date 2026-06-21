@@ -13,7 +13,7 @@ type SR = any;
 export default function VoiceSOSListener({
   onTrigger,
   triggerWords = ["help", "sos", "save me", "emergency", "bachao", "danger"],
-  countdownSeconds = 3,
+  countdownSeconds = 2,
 }: Props) {
   const [supported, setSupported] = useState(true);
   const [listening, setListening] = useState(false);
@@ -220,28 +220,41 @@ export default function VoiceSOSListener({
             {countdown}
           </div>
           <div style={{ fontSize: 13, marginTop: 8, opacity: 0.95, maxWidth: 280 }}>
-            Activating SOS in {countdown}s. Tap cancel if you're safe.
+            Activating SOS in {countdown}s. Hold cancel if you're safe.
           </div>
           <button
-            onClick={cancelCountdown}
+            onPointerDown={() => {
+              const t = window.setTimeout(() => cancelCountdown(), 1200);
+              (window as any).__sosHoldTimer = t;
+            }}
+            onPointerUp={() => {
+              const t = (window as any).__sosHoldTimer;
+              if (t) { clearTimeout(t); (window as any).__sosHoldTimer = null; }
+            }}
+            onPointerLeave={() => {
+              const t = (window as any).__sosHoldTimer;
+              if (t) { clearTimeout(t); (window as any).__sosHoldTimer = null; }
+            }}
             style={{
               marginTop: 24,
               padding: "14px 28px",
               borderRadius: 999,
-              background: "#fff",
-              color: "#DC2626",
-              fontSize: 15,
-              fontWeight: 700,
-              border: "none",
+              background: "rgba(255,255,255,0.18)",
+              color: "#fff",
+              fontSize: 14,
+              fontWeight: 600,
+              border: "2px solid rgba(255,255,255,0.6)",
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
-              boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
               cursor: "pointer",
+              touchAction: "none",
+              userSelect: "none",
             }}
           >
-            <X size={18} strokeWidth={3} /> Cancel
+            <X size={16} strokeWidth={3} /> Hold to Cancel
           </button>
+
         </div>
       )}
 
