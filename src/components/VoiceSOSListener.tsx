@@ -13,7 +13,7 @@ type SR = any;
 export default function VoiceSOSListener({
   onTrigger,
   triggerWords = ["help", "sos", "save me", "emergency", "bachao", "danger"],
-  countdownSeconds = 2,
+  countdownSeconds = 5,
 }: Props) {
   const [supported, setSupported] = useState(true);
   const [listening, setListening] = useState(false);
@@ -22,19 +22,75 @@ export default function VoiceSOSListener({
   const recRef = useRef<SR | null>(null);
   const countdownRef = useRef<number | null>(null);
   const cancelledRef = useRef(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const beepIntervalRef = useRef<number | null>(null);
+
+  const playBeep = (freq = 880, duration = 0.18) => {
+    try {
+      if (!audioCtxRef.current) {
+        const Ctx = (window as any).AudioContext || (window as any).webkitAudioContext;
+        if (!Ctx) return;
+        audioCtxRef.current = new Ctx();
+      }
+      const ctx = audioCtxRef.current!;
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.value = freq;
+      gain.gain.value = 0.0001;
+      osc.connect(gain).connect(ctx.destination);
+      const now = ctx.currentTime;
+      gain.gain.exponentialRampToValueAtTime(0.35, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    } catch {
+      /* noop */
+    }
+  };
+
+  const startAlarm = () => {
+    if (beepIntervalRef.current !== null) return;
+    playBeep(880, 0.2);
+    beepIntervalRef.current = window.setInterval(() => {
+      playBeep(880, 0.18);
+      setTimeout(() => playBeep(1175, 0.18), 220);
+    }, 800);
+  };
+
+  const stopAlarm = () => {
+    if (beepIntervalRef.current !== null) {
+      clearInterval(beepIntervalRef.current);
+      beepIntervalRef.current = null;
+    }
+  };
+
+  const triggerFinalAlarm = () => {
+    // longer wailing tone on activation
+    playBeep(1320, 0.6);
+    setTimeout(() => playBeep(1760, 0.6), 250);
+    if (navigator.vibrate) navigator.vibrate([400, 120, 400, 120, 800]);
+  };
 
   // Start countdown when trigger word is heard
   const startCountdown = () => {
     if (countdownRef.current !== null) return; // already counting
     cancelledRef.current = false;
     setCountdown(countdownSeconds);
+    startAlarm();
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
     let n = countdownSeconds;
     countdownRef.current = window.setInterval(() => {
       n -= 1;
       if (cancelledRef.current) return;
       if (n <= 0) {
         clearCountdown();
-        if (!cancelledRef.current) onTrigger();
+        stopAlarm();
+        if (!cancelledRef.current) {
+          triggerFinalAlarm();
+          onTrigger();
+        }
       } else {
         setCountdown(n);
       }
@@ -52,7 +108,9 @@ export default function VoiceSOSListener({
   const cancelCountdown = () => {
     cancelledRef.current = true;
     clearCountdown();
+    stopAlarm();
   };
+
 
   useEffect(() => {
     const SpeechRecognition =
@@ -220,40 +278,29 @@ export default function VoiceSOSListener({
             {countdown}
           </div>
           <div style={{ fontSize: 13, marginTop: 8, opacity: 0.95, maxWidth: 280 }}>
-            Activating SOS in {countdown}s. Hold cancel if you're safe.
+            Activating SOS in {countdown}s. Tap cancel if this was a mistake.
           </div>
           <button
-            onPointerDown={() => {
-              const t = window.setTimeout(() => cancelCountdown(), 1200);
-              (window as any).__sosHoldTimer = t;
-            }}
-            onPointerUp={() => {
-              const t = (window as any).__sosHoldTimer;
-              if (t) { clearTimeout(t); (window as any).__sosHoldTimer = null; }
-            }}
-            onPointerLeave={() => {
-              const t = (window as any).__sosHoldTimer;
-              if (t) { clearTimeout(t); (window as any).__sosHoldTimer = null; }
-            }}
+            onClick={cancelCountdown}
             style={{
               marginTop: 24,
-              padding: "14px 28px",
+              padding: "16px 32px",
               borderRadius: 999,
-              background: "rgba(255,255,255,0.18)",
-              color: "#fff",
-              fontSize: 14,
-              fontWeight: 600,
-              border: "2px solid rgba(255,255,255,0.6)",
+              background: "#fff",
+              color: "#DC2626",
+              fontSize: 16,
+              fontWeight: 700,
+              border: "none",
               display: "inline-flex",
               alignItems: "center",
               gap: 8,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.25)",
               cursor: "pointer",
-              touchAction: "none",
-              userSelect: "none",
             }}
           >
-            <X size={16} strokeWidth={3} /> Hold to Cancel
+            <X size={18} strokeWidth={3} /> Cancel
           </button>
+
 
         </div>
       )}
